@@ -1,0 +1,55 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: postgres
+    ports:
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+    networks:
+      - greb-network
+  pgadmin:
+    image: dpage/pgadmin4:6.20
+    container_name: pgadmin
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: tienhung17092004@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: ADMIN
+      PGADMIN_LISTEN_PORT: 80
+    ports: 
+      - 15432:80
+    depends_on:
+      - postgres
+    networks:
+      - greb-network
+  keycloak:
+    image: quay.io/keycloak/keycloak:21.0.2
+    container_name: keycloak
+    command: [ 'start-dev' ]
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_PROXY: passthrough
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:${POSTGRES_PORT}/keycloak
+      KC_DB_USERNAME: ${POSTGRES_USER}
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+     - 8080:8080
+    depends_on:
+      - postgres
+    networks:
+      - greb-network
+
+networks:
+  greb-network:
+
+volumes: 
+  postgres:
+  pgadmin:
