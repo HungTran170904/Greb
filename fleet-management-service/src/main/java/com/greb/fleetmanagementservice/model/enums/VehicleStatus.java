@@ -1,2 +1,7 @@
-package com.greb.fleetmanagementservice.model.enums;public class VehicleStatus {
+package com.greb.fleetmanagementservice.model.enums;
+
+public enum VehicleStatus {
+    ACTIVE,
+    INACTIVE,
+    UNDER_MAINTENANCE
 }

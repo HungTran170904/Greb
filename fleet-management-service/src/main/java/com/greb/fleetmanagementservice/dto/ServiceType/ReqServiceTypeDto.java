@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 public class ReqServiceTypeDto {
@@ -30,7 +31,7 @@ public class ReqServiceTypeDto {
     private BigDecimal cancellationFee;
 
     @NotNull
-    private VehicleType vehicleType;
+    private List<VehicleType> acceptedVehicleTypes;
 
     @NotNull
     private Boolean isAvailable=false;

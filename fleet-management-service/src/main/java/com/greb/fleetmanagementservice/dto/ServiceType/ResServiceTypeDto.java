@@ -4,6 +4,7 @@ import com.greb.fleetmanagementservice.model.enums.VehicleType;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 public class ResServiceTypeDto {
@@ -23,7 +24,7 @@ public class ResServiceTypeDto {
 
     private BigDecimal cancellationFee;
 
-    private VehicleType vehicleType;
+    private List<VehicleType> acceptedVehicleTypes;
 
     private Boolean isAvailable;
 

@@ -1,2 +1,7 @@
-package com.greb.fleetmanagementservice.model.enums;public class RequestType {
+package com.greb.fleetmanagementservice.model.enums;
+
+public enum RequestType {
+    REGISTER,
+    UPDATE,
+    UNREGISTER
 }

@@ -1,6 +1,6 @@
-package com.greb.Exception;
+package com.greb.fleetmanagementservice.exception;
 
-import com.greb.dto.ErrorDto;
+import com.greb.fleetmanagementservice.dto.ErrorDto;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,7 @@ import java.util.Set;
 public class GlobalExceptionHandler {
     private final Logger LOGGER= LoggerFactory.getLogger(Exception.class);
 
-    @ExceptionHandler(BadRequestException.class)
+    @ExceptionHandler({BadRequestException.class, IllegalArgumentException.class})
     public ResponseEntity<ErrorDto> handleBadRequestException(Exception ex){
         LOGGER.error(ex.getMessage());
         var errorDto=new ErrorDto(HttpStatus.BAD_REQUEST,"Bad request", ex.getMessage());

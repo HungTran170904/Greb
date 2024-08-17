@@ -20,6 +20,12 @@ public class UserService {
         final String jwt = ((Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
                 .getTokenValue();
         final URI uri= UriComponentsBuilder.fromHttpUrl(serviceUrlConfig.userServiceUrl())
-                .path("/driver/")
+                .path("/driver/private/driver-id")
+                .build().toUri();
+        return restClient.get()
+                .uri(uri)
+                .headers(h->h.setBearerAuth(jwt))
+                .retrieve()
+                .body(String.class);
     }
 }

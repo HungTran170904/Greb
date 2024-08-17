@@ -11,13 +11,13 @@ import org.hibernate.validator.constraints.UUID;
 import java.time.LocalDate;
 
 @Data
-public class ReqVehicleRequestDto {
+public class CreateVehicleRequestDto {
     @UUID
     private String vehicleId;
 
     private VehicleType vehicleType;
 
-    @Pattern(regexp = "^[0-9]{2}-[A-Z]{1}-[0-9]{3}\\.[0-9]{2}$", message = "Invalid licence plate")
+    @Pattern(regexp = "^[0-9]{2}-[A-Z]{2}-[0-9]{3}\\.[0-9]{2}$", message = "Invalid licence plate")
     private String licencePlate;
 
     @UUID
