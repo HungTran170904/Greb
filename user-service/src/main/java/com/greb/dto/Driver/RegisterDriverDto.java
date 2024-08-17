@@ -9,6 +9,9 @@ import java.time.LocalDate;
 
 @Data
 public class RegisterDriverDto {
+    @NotBlank
+    private String name;
+
     private LocalDate dateOfBirth;
 
     @Pattern(regexp = "\\+?[0-9. ()-]{7,25}", message = "Invalid phone number")

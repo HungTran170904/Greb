@@ -19,8 +19,10 @@ public class DriverConverter {
 
     public ResponseDriverDto toResponseDto(Driver driver, UserRepresentation user){
         var driverDto=modelMapper.map(driver, ResponseDriverDto.class);
-        var userDto= userConverter.toDto(user);
-        driverDto.setUser(userDto);
+        if(user!=null) {
+            var userDto= userConverter.toDto(user);
+            driverDto.setUser(userDto);
+        }
         return driverDto;
     }
 }

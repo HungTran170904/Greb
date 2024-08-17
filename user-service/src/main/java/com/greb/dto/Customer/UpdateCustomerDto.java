@@ -9,6 +9,9 @@ import java.time.LocalDate;
 
 @Data
 public class UpdateCustomerDto{
+    @NotBlank
+    private String name;
+
     private String address;
 
     @Pattern(regexp = "\\+?[0-9. ()-]{7,25}", message = "Invalid phone number")
@@ -20,10 +23,4 @@ public class UpdateCustomerDto{
 
     @UUID
     private String avatarId;
-
-    @NotBlank
-    private String firstName;
-
-    @NotBlank
-    private String lastName;
 }

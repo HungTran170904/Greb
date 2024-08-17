@@ -12,8 +12,8 @@ import io.swagger.v3.oas.annotations.servers.Server;
 
 @OpenAPIDefinition(
         info = @Info(
-                title = "Customer Service API",
-                description = "Customer API documentation",
+                title = "User Service API",
+                description = "User API documentation",
                 version = "1.0"
         ),
         security = @SecurityRequirement(name = "oauth2_bearer"),

@@ -9,6 +9,9 @@ import java.time.LocalDate;
 
 @Data
 public class UpdateDriverDto {
+    @NotBlank
+    private String name;
+
     private LocalDate dateOfBirth;
 
     @Pattern(regexp = "\\+?[0-9. ()-]{7,25}", message = "Invalid phone number")
@@ -24,10 +27,4 @@ public class UpdateDriverDto {
 
     @UUID
     private String avatarId;
-
-    @NotBlank
-    private String firstName;
-
-    @NotBlank
-    private String lastName;
 }

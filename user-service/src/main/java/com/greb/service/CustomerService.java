@@ -1,16 +1,17 @@
 package com.greb.service;
 
-import com.greb.Contraints.UserRole;
-import com.greb.Exception.BadRequestException;
-import com.greb.Repository.CustomerRepository;
-import com.greb.dto.Customer.CustomerConverter;
-import com.greb.dto.Customer.RegisterCustomerDto;
-import com.greb.dto.Customer.ResponseCustomerDto;
-import com.greb.dto.Customer.UpdateCustomerDto;
+import com.greb.contraints.UserRole;
+import com.greb.dto.Customer.*;
+import com.greb.exception.BadRequestException;
+import com.greb.model.Customer;
+import com.greb.repository.CustomerRepository;
+import com.greb.dto.Pagination;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.representations.idm.RoleRepresentation;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -28,9 +29,9 @@ public class CustomerService {
     public ResponseCustomerDto register(RegisterCustomerDto dto){
         String userId= SecurityContextHolder.getContext().getAuthentication().getName();
         // add CUSTOMER role
-        var user= realmResource.users().get(userId);
-        if(user==null) throw new BadRequestException("UserId "+userId+" not found");
-        List<RoleRepresentation> roles=user.roles().realmLevel().listAll();
+        var userResource= realmResource.users().get(userId);
+        if(userResource==null) throw new BadRequestException("UserId "+userId+" not found");
+        List<RoleRepresentation> roles=userResource.roles().realmLevel().listAll();
         if (roles.stream().anyMatch(
                 role -> Arrays.stream(UserRole.values())
                         .anyMatch(userRole -> userRole.name().equals(role.getName())
@@ -39,26 +40,21 @@ public class CustomerService {
             throw new BadRequestException("This user has already registered");
         }
         RoleRepresentation customerRole= realmResource.roles().get(UserRole.CUSTOMER.toString()).toRepresentation();
-        user.roles().realmLevel().add(List.of(customerRole));
+        userResource.roles().realmLevel().add(List.of(customerRole));
         // create new Customer
         var customer= customerConverter.fromRegisterDto(dto);
         customer.setUserId(userId);
         customer.setDiscountPoint(0);
-        customerRepo.save(customer);
+        var savedCustomer=customerRepo.save(customer);
 
-        return customerConverter.toResponseDto(customer, user.toRepresentation());
+        return customerConverter.toResponseDto(savedCustomer, userResource.toRepresentation());
     }
 
     @Transactional
     public ResponseCustomerDto updateProfile(UpdateCustomerDto dto){
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        //update user in keycloak
         var user= realmResource.users().get(userId).toRepresentation();
         if(user==null) throw new BadRequestException("UserId "+userId+" not found");
-        user.setFirstName(dto.getFirstName());
-        user.setLastName(dto.getLastName());
-        realmResource.users().get(userId).update(user);
 
         // update customer
         var customer= customerRepo.findByUserId(userId);
@@ -67,6 +63,7 @@ public class CustomerService {
         customer.setGender(dto.getGender());
         customer.setDateOfBirth(dto.getDateOfBirth());
         customer.setPhoneNumber(dto.getPhoneNumber());
+        customer.setName(dto.getName());
         customerRepo.save(customer);
 
         return customerConverter.toResponseDto(customer, user);
@@ -84,5 +81,15 @@ public class CustomerService {
         var customer= customerRepo.findByUserId(userId);
         if(customer==null) throw new BadRequestException("No customer found with the userId "+userId);
         return customerConverter.toResponseDto(customer, user);
+    }
+
+    public ListCustomersDto searchCustomers(String name, Integer pageNo, Integer pageSize){
+        PageRequest pageRequest= PageRequest.of(pageNo, pageSize);
+        Page<Customer> customerPage= customerRepo.searchCustomers(name.toLowerCase(), pageRequest);
+        var customerDtos= customerPage.getContent().stream()
+                .map(customer-> customerConverter.toResponseDto(customer, null))
+                .toList();
+        var pagination= new Pagination(pageNo, customerPage.getTotalPages(), customerPage.getTotalElements());
+        return new ListCustomersDto(customerDtos, pagination);
     }
 }

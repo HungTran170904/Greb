@@ -10,6 +10,8 @@ import java.time.LocalDate;
 public class ResponseDriverDto {
     private String id;
 
+    private String name;
+
     private LocalDate dateOfBirth;
 
     private String phoneNumber;
@@ -25,6 +27,10 @@ public class ResponseDriverDto {
     private String userId;
 
     private String avatarId;
+
+    private Integer totalRatings;
+
+    private Integer totalRatingPoints;
 
     private ResponseUserDto user;
 }

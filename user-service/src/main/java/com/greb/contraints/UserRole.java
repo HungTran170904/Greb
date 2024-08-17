@@ -1,4 +1,4 @@
-package com.greb.Contraints;
+package com.greb.contraints;
 
 public enum UserRole {
     ADMIN,

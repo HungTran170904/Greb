@@ -1,6 +1,7 @@
 package com.greb.Exception;
 
 import com.greb.dto.ErrorDto;
+import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -8,15 +9,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 
 @RestControllerAdvice
@@ -34,12 +33,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({AccessDeniedException.class})
     public ResponseEntity<ErrorDto> handleUnAuthorizedException(Exception ex){
         LOGGER.error(ex.getMessage());
-        var errorDto=new ErrorDto(HttpStatus.UNAUTHORIZED,"Unauthorized", ex.getMessage());
+        var errorDto=new ErrorDto(HttpStatus.UNAUTHORIZED,"Access Denied", ex.getMessage());
         return ResponseEntity.status(403).body(errorDto);
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorDto> handleValidationException(MethodArgumentNotValidException ex){
+    @ExceptionHandler(BindException.class)
+    public ResponseEntity<ErrorDto> handleValidationException(BindException ex){
         LOGGER.error(ex.getMessage());
         Map<String, String> errors = new HashMap();
         ex.getBindingResult().getFieldErrors().forEach((error) -> {
@@ -49,24 +48,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(errorDto);
     }
 
-    @ExceptionHandler(KeycloakException.class)
-    public ResponseEntity<ErrorDto> handleKeyCloakException(KeycloakException ex){
-        try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(
-                        ex.getResponse().readEntity(InputStream.class))
-                )
-        ) {
-            StringBuilder errorDetails = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                errorDetails.append(line);
-            }
-            ErrorDto errorDto= new ErrorDto(HttpStatus.BAD_REQUEST,"keycloak exception", errorDetails.toString());
-            return ResponseEntity.badRequest().body(errorDto);
-        } catch (Exception unkownError) {
-            var errorDto= new ErrorDto(HttpStatus.INTERNAL_SERVER_ERROR, "Unknown error",unkownError.getMessage());
-            return ResponseEntity.status(500).body(errorDto);
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ErrorDto> handleConstraintException(ConstraintViolationException ex){
+        LOGGER.error(ex.getMessage());
+        Map<String, String> errors = new HashMap();
+        Set<ConstraintViolation<?>> violations = ex.getConstraintViolations();
+        for(var violation : violations){
+            errors.put(violation.getPropertyPath().toString(), violation.getMessage());
         }
+        var errorDto= new ErrorDto(HttpStatus.BAD_REQUEST, "Validation error","", errors);
+        return ResponseEntity.badRequest().body(errorDto);
     }
 
     @ExceptionHandler(Exception.class)

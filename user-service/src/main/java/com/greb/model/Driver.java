@@ -7,17 +7,22 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UuidGenerator;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Driver {
     @Id @UuidGenerator
     private String id;
+
+    private String name;
 
     private LocalDate dateOfBirth;
 
@@ -36,4 +41,14 @@ public class Driver {
     private String userId;
 
     private String avatarId;
+
+    @Column(nullable = false)
+    private Integer totalRatings;
+
+    @Column(nullable = false)
+    private Integer totalRatingPoints;
+
+    @CreatedDate
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 }

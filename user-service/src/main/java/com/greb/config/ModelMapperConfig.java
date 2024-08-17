@@ -1,4 +1,4 @@
-package com.greb.dto;
+package com.greb.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

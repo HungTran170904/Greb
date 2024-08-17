@@ -19,8 +19,10 @@ public class CustomerConverter {
 
     public ResponseCustomerDto toResponseDto(Customer customer, UserRepresentation user) {
         var dto=modelMapper.map(customer, ResponseCustomerDto.class);
-        var userDto=userConverter.toDto(user);
-        dto.setUser(userDto);
+        if(user!=null) {
+            var userDto=userConverter.toDto(user);
+            dto.setUser(userDto);
+        }
         return dto;
     }
 }
