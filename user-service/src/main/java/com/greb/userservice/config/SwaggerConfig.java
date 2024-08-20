@@ -1,4 +1,4 @@
-package com.greb.config;
+package com.greb.userservice.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;

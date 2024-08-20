@@ -1,9 +1,8 @@
-package com.greb.model;
+package com.greb.userservice.model;
 
-import com.greb.model.enums.JobStatus;
+import com.greb.userservice.model.enums.JobStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UuidGenerator;

@@ -1,4 +1,4 @@
-package com.greb.config;
+package com.greb.userservice.config;
 
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.keycloak.OAuth2Constants;

@@ -1,6 +1,6 @@
-package com.greb.dto.Customer;
+package com.greb.userservice.dto.Customer;
 
-import com.greb.dto.Pagination;
+import com.greb.userservice.dto.Pagination;
 
 import java.util.List;
 

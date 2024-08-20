@@ -1,11 +1,11 @@
-package com.greb.service;
+package com.greb.userservice.service;
 
-import com.greb.contraints.UserRole;
-import com.greb.dto.Customer.*;
-import com.greb.exception.BadRequestException;
-import com.greb.model.Customer;
-import com.greb.repository.CustomerRepository;
-import com.greb.dto.Pagination;
+import com.greb.userservice.contraints.UserRole;
+import com.greb.userservice.dto.Customer.*;
+import com.greb.userservice.exception.BadRequestException;
+import com.greb.userservice.model.Customer;
+import com.greb.userservice.repository.CustomerRepository;
+import com.greb.userservice.dto.Pagination;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.keycloak.admin.client.resource.RealmResource;
@@ -42,7 +42,7 @@ public class CustomerService {
         RoleRepresentation customerRole= realmResource.roles().get(UserRole.CUSTOMER.toString()).toRepresentation();
         userResource.roles().realmLevel().add(List.of(customerRole));
         // create new Customer
-        var customer= customerConverter.fromRegisterDto(dto);
+        Customer customer= customerConverter.fromRegisterDto(dto);
         customer.setUserId(userId);
         customer.setDiscountPoint(0);
         var savedCustomer=customerRepo.save(customer);

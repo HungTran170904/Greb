@@ -1,11 +1,11 @@
-package com.greb.controller;
+package com.greb.userservice.controller;
 
-import com.greb.dto.Customer.ListCustomersDto;
-import com.greb.dto.Customer.RegisterCustomerDto;
-import com.greb.dto.Customer.ResponseCustomerDto;
-import com.greb.dto.Customer.UpdateCustomerDto;
-import com.greb.dto.ErrorDto;
-import com.greb.service.CustomerService;
+import com.greb.userservice.dto.Customer.ListCustomersDto;
+import com.greb.userservice.dto.Customer.RegisterCustomerDto;
+import com.greb.userservice.dto.Customer.ResponseCustomerDto;
+import com.greb.userservice.dto.Customer.UpdateCustomerDto;
+import com.greb.userservice.dto.ErrorDto;
+import com.greb.userservice.service.CustomerService;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

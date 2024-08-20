@@ -1,8 +1,6 @@
-package com.greb.dto.User;
+package com.greb.userservice.dto.User;
 
 import lombok.Data;
-
-import java.util.List;
 
 @Data
 public class ResponseUserDto {

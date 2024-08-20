@@ -1,4 +1,4 @@
-package com.greb.dto.Customer;
+package com.greb.userservice.dto.Customer;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;

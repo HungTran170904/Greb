@@ -27,4 +27,6 @@ public interface VehicleRepository extends JpaRepository<Vehicle, String> {
             Pageable pageable);
 
     List<Vehicle> findByDriverId(String driverId);
+
+    String findLicencePlateById(String vehicleId);
 }

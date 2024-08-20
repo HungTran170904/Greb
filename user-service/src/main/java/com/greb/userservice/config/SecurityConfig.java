@@ -1,4 +1,4 @@
-package com.greb.config;
+package com.greb.userservice.config;
 
 import org.springframework.core.convert.converter.Converter;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package com.greb.config;
+package com.greb.userservice.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;

@@ -1,4 +1,4 @@
-package com.greb.model.enums;
+package com.greb.userservice.model.enums;
 
 public enum JobStatus {
     ACTIVE,

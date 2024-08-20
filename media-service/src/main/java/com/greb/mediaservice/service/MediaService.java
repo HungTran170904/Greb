@@ -54,7 +54,7 @@ public class MediaService {
         int lastDotIndex=multipartFile.getOriginalFilename().lastIndexOf(".");
         var extension=multipartFile.getOriginalFilename().substring(lastDotIndex);
         var filename=multipartFile.getOriginalFilename().substring(0, lastDotIndex);
-        String uniqueFilename=filename+rand.nextInt(1000)+extension;
+        String uniqueFilename=filename+"_"+rand.nextInt(1000)+extension;
 
         String targetPath=this.storageLocation.toString()+File.separator+uniqueFilename;
         File file=new File(targetPath);

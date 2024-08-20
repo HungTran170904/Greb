@@ -1,7 +1,7 @@
-package com.greb.dto.Driver;
+package com.greb.userservice.dto.Driver;
 
-import com.greb.dto.User.UserConverter;
-import com.greb.model.Driver;
+import com.greb.userservice.dto.User.UserConverter;
+import com.greb.userservice.model.Driver;
 import lombok.AllArgsConstructor;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.modelmapper.ModelMapper;

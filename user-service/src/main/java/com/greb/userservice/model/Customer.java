@@ -1,4 +1,4 @@
-package com.greb.model;
+package com.greb.userservice.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

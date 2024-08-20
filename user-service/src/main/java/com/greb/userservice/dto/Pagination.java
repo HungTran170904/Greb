@@ -1,4 +1,4 @@
-package com.greb.dto;
+package com.greb.userservice.dto;
 
 public record Pagination (
     Integer currentPage,

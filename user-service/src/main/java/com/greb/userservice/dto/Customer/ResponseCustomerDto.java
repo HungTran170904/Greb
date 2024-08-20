@@ -1,6 +1,6 @@
-package com.greb.dto.Customer;
+package com.greb.userservice.dto.Customer;
 
-import com.greb.dto.User.ResponseUserDto;
+import com.greb.userservice.dto.User.ResponseUserDto;
 import lombok.Data;
 
 import java.time.LocalDate;

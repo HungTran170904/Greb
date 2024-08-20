@@ -1,4 +1,4 @@
-package com.greb.dto;
+package com.greb.userservice.dto;
 
 import org.springframework.http.HttpStatus;
 

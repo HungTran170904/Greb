@@ -1,31 +1,80 @@
-package com.greb.service;
+package com.greb.userservice.service;
 
-import com.greb.contraints.UserRole;
-import com.greb.dto.Driver.*;
-import com.greb.exception.BadRequestException;
-import com.greb.model.Driver;
-import com.greb.repository.DriverRepository;
-import com.greb.model.enums.JobStatus;
-import com.greb.dto.Pagination;
+import com.greb.userservice.contraints.UserRole;
+import com.greb.userservice.dto.Notification.MailDto;
+import com.greb.userservice.dto.Notification.NoticeDto;
+import com.greb.userservice.exception.BadRequestException;
+import com.greb.userservice.model.Driver;
+import com.greb.userservice.repository.DriverRepository;
+import com.greb.userservice.model.enums.JobStatus;
+import com.greb.userservice.dto.Driver.*;
+import com.greb.userservice.dto.Pagination;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.keycloak.admin.client.resource.RealmResource;
+import org.keycloak.admin.client.resource.RoleResource;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
 public class DriverService {
     private final RealmResource realmResource;
     private final DriverConverter driverConverter;
+    private final NotificationService notiService;
     private final DriverRepository driverRepo;
     private final DriverRepository driverRepository;
+
+
+    private void notifyNewDriverToAdmin(String driverId){
+        final String jwt= ((Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
+                .getTokenValue();
+        CompletableFuture.runAsync(()->{
+            RoleResource roleResource = realmResource.roles().get("ADMIN");
+            List<String> fcmTokens = new ArrayList();
+            roleResource.getRoleUserMembers().forEach(member -> {
+                if(member.getAttributes().containsKey("fcmToken"))
+                    fcmTokens.add(member.getAttributes().get("fcmToken").get(0));
+            });
+            var noticeDto= NoticeDto.builder()
+                    .registrationTokens(fcmTokens)
+                    .title("New Driver Registration")
+                    .content("There is a new driver registration request. DriverId: "+driverId)
+                    .build();
+            notiService.sendWebPush(noticeDto, jwt);
+        });
+    }
+
+    private void notifyAcceptedToDriver(Driver driver){
+        final String jwt= ((Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
+                .getTokenValue();
+        CompletableFuture.runAsync(()->{
+            var user= realmResource.users().get(driver.getUserId()).toRepresentation();
+            String content;
+            if(driver.getJobStatus()==JobStatus.ACTIVE)
+                content="Hello <b>"+user.getFirstName()+" "+user.getLastName()+"</b>,"+
+                        " we are glad to inform you that your driver registration has been accepted."+
+                        "Now, you are a member of our <b>Greb</b> family.";
+            else content="Hello <b>"+user.getFirstName()+" "+user.getLastName()+"</b>,"+
+                    " your driver registration has been rejected. " +
+                    "For more info, please contact email: <a>tienhung17092004@gmail.com</a>.";
+            var mailDto= MailDto.builder()
+                    .destEmails(List.of(user.getEmail()))
+                    .subject("Driver accepted")
+                    .content(content)
+                    .build();
+            notiService.sendEmail(mailDto, jwt);
+        });
+    }
 
     @Transactional
     public ResponseDriverDto register(RegisterDriverDto dto) {
@@ -52,6 +101,8 @@ public class DriverService {
         driver.setTotalRatings(0);
         var savedDriver=driverRepo.save(driver);
 
+        notifyNewDriverToAdmin(driver.getId());
+
         return driverConverter.toResponseDto(savedDriver, user.toRepresentation());
     }
 
@@ -75,17 +126,9 @@ public class DriverService {
     public void acceptDriver(String driverId, JobStatus jobStatus){
         var driver= driverRepo.findById(driverId).orElseThrow(()->new BadRequestException("Driver not found"));
         driver.setJobStatus(jobStatus);
-        driverRepo.save(driver);
-        if(jobStatus==JobStatus.ACTIVE){
-            var user= realmResource.users().get(driver.getUserId()).toRepresentation();
-            /*mailService.sendMail(
-                    user.getEmail(),
-                    "Driver accepted",
-                    "Hello <b>"+user.getFirstName()+" "+user.getLastName()+"</b>,"+
-                            " we are glad to inform you that your driver registration has been accepted."+
-                            "Now, you are a member of our <b>Greb</b> family."
-            );*/
-        }
+        var savedDriver=driverRepo.save(driver);
+
+        notifyAcceptedToDriver(savedDriver);
     }
 
     public void updateAvarageRating(String driverId, Integer ratingPoint){
@@ -121,5 +164,9 @@ public class DriverService {
     public String getDriverId(){
         var userId=SecurityContextHolder.getContext().getAuthentication().getName();
         return driverRepo.findIdByUserId(userId);
+    }
+
+    public String getUserIdByDriverId(String driverId){
+        return driverRepo.findUserIdById(driverId);
     }
 }

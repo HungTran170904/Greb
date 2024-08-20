@@ -1,7 +1,7 @@
-package com.greb.dto.Driver;
+package com.greb.userservice.dto.Driver;
 
-import com.greb.dto.User.ResponseUserDto;
-import com.greb.model.enums.JobStatus;
+import com.greb.userservice.dto.User.ResponseUserDto;
+import com.greb.userservice.model.enums.JobStatus;
 import lombok.Data;
 
 import java.time.LocalDate;

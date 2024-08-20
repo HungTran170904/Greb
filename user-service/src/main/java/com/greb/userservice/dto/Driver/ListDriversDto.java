@@ -1,6 +1,6 @@
-package com.greb.dto.Driver;
+package com.greb.userservice.dto.Driver;
 
-import com.greb.dto.Pagination;
+import com.greb.userservice.dto.Pagination;
 import java.util.List;
 
 public record ListDriversDto (

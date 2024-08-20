@@ -1,4 +1,4 @@
-package com.greb.dto.Driver;
+package com.greb.userservice.dto.Driver;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;

@@ -1,8 +1,7 @@
-package com.greb.dto.User;
+package com.greb.userservice.dto.User;
 
 import lombok.AllArgsConstructor;
 import org.keycloak.representations.idm.UserRepresentation;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 @Component

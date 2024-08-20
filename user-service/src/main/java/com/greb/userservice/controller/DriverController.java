@@ -1,12 +1,12 @@
-package com.greb.controller;
+package com.greb.userservice.controller;
 
-import com.greb.dto.Driver.ListDriversDto;
-import com.greb.dto.Driver.RegisterDriverDto;
-import com.greb.dto.Driver.ResponseDriverDto;
-import com.greb.dto.Driver.UpdateDriverDto;
-import com.greb.dto.ErrorDto;
-import com.greb.model.enums.JobStatus;
-import com.greb.service.DriverService;
+import com.greb.userservice.dto.Driver.ListDriversDto;
+import com.greb.userservice.dto.Driver.RegisterDriverDto;
+import com.greb.userservice.dto.Driver.ResponseDriverDto;
+import com.greb.userservice.dto.Driver.UpdateDriverDto;
+import com.greb.userservice.dto.ErrorDto;
+import com.greb.userservice.model.enums.JobStatus;
+import com.greb.userservice.service.DriverService;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -111,5 +111,13 @@ public class DriverController {
     @GetMapping("/private/driver-id")
     public ResponseEntity<String> getDriverId(){
         return ResponseEntity.ok(driverService.getDriverId());
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/private/user-id")
+    public ResponseEntity<String> getUserIdByDriverId(
+            @RequestParam("driverId") String driverId
+    ){
+        return ResponseEntity.ok(driverService.getUserIdByDriverId(driverId));
     }
 }
