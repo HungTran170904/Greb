@@ -1,6 +1,8 @@
 package com.greb.fleetmanagementservice.service;
 
 import com.greb.fleetmanagementservice.config.ServiceUrlConfig;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,10 +16,12 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserService extends AbstractCircuitBreakFallbackHandler{
     private final RestClient restClient;
     private final ServiceUrlConfig serviceUrlConfig;
 
+    @Retry(name="restApi")
+    @CircuitBreaker(name="restCircuitBreaker", fallbackMethod="handleFallback")
     public String getDriverId(){
         final String jwt = ((Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
                 .getTokenValue();
@@ -31,6 +35,9 @@ public class UserService {
                 .body(String.class);
     }
 
+
+    @Retry(name="restApi")
+    @CircuitBreaker(name="restCircuitBreaker", fallbackMethod="handleFallback")
     public String getUserIdOfDriver(String driverId, String jwt ){
         final URI uri= UriComponentsBuilder.fromHttpUrl(serviceUrlConfig.userServiceUrl())
                 .path("/driver/private/user-id")

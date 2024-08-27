@@ -3,6 +3,8 @@ package com.greb.userservice.service;
 import com.greb.userservice.config.ServiceUrlConfig;
 import com.greb.userservice.dto.Notification.MailDto;
 import com.greb.userservice.dto.Notification.NoticeDto;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,10 +18,13 @@ import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
-public class NotificationService {
+public class NotificationService extends AbstractCircuitBreakFallbackHandler{
     private final ServiceUrlConfig serviceUrlConfig;
     private final RestClient restClient;
 
+
+    @Retry(name="restApi")
+    @CircuitBreaker(name="restCircuitBreaker", fallbackMethod="handleBodilessFallback")
     public void sendWebPush(NoticeDto dto, String jwt){
         final URI uri= UriComponentsBuilder.fromHttpUrl(serviceUrlConfig.notificationServiceUrl())
                 .path("/send-webpush")
@@ -33,6 +38,8 @@ public class NotificationService {
                 .toBodilessEntity();
     }
 
+    @Retry(name="restApi")
+    @CircuitBreaker(name="restCircuitBreaker", fallbackMethod="handleBodilessFallback")
     public void sendEmail(MailDto dto, String jwt){
         final URI uri= UriComponentsBuilder.fromHttpUrl(serviceUrlConfig.notificationServiceUrl())
                 .path("/send-email")

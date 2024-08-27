@@ -25,7 +25,7 @@ public class ReqServiceTypeDto {
     private BigDecimal taxFare;
 
     @NotNull
-    private BigDecimal timeFare;
+    private BigDecimal changeDestinationFee;
 
     @NotNull
     private BigDecimal cancellationFee;

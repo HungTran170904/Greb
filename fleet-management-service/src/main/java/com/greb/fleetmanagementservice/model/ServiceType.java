@@ -30,7 +30,7 @@ public class ServiceType {
 
     private BigDecimal taxFare;
 
-    private BigDecimal timeFare;
+    private BigDecimal changeDestinationFee;
 
     private BigDecimal cancellationFee;
 

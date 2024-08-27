@@ -26,7 +26,7 @@ public class ServiceTypeConverter {
         serviceType.setDistanceFare(dto.getDistanceFare());
         serviceType.setTaxFare(dto.getTaxFare());
         serviceType.setCancellationFee(dto.getCancellationFee());
-        serviceType.setTimeFare(dto.getTimeFare());
+        serviceType.setChangeDestinationFee(dto.getChangeDestinationFee());
         serviceType.setIconId(dto.getIconId());
         serviceType.setIsAvailable(dto.getIsAvailable());
     }

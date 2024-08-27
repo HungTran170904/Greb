@@ -1,0 +1,20 @@
+{
+  "name": "mongodb-sink-connector",
+  "config": {
+    "connector.class": "com.mongodb.kafka.connect.MongoSinkConnector",
+    "tasks.max": "1",
+    "topics": "output-location",
+    "connection.uri": "mongodb://admin:admin@mongodb:27017",
+    "database": "location",
+    "collection": "output-location",
+    "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": false,
+
+    "transforms": "TimestampConverter",
+    "transforms.TimestampConverter.type": "org.apache.kafka.connect.transforms.TimestampConverter$Value",
+    "transforms.TimestampConverter.format": "yyyy-MM-dd'T'HH:mm:ss.SSSX",
+    "transforms.TimestampConverter.target.type": "Timestamp",
+    "transforms.TimestampConverter.field":"time"
+  }
+}

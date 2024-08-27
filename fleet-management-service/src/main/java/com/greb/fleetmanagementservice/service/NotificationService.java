@@ -20,7 +20,7 @@ import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
-public class NotificationService {
+public class NotificationService extends AbstractCircuitBreakFallbackHandler{
     private final RestClient restClient;
     private final ServiceUrlConfig serviceUrlConfig;
     private final RealmResource realmResource;

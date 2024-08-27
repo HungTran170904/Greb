@@ -125,6 +125,8 @@ public class DriverService {
 
     public void acceptDriver(String driverId, JobStatus jobStatus){
         var driver= driverRepo.findById(driverId).orElseThrow(()->new BadRequestException("Driver not found"));
+        /*if(driver.getJobStatus().equals(jobStatus))
+            throw new BadRequestException("Driver is already in '"+jobStatus+"' job status");*/
         driver.setJobStatus(jobStatus);
         var savedDriver=driverRepo.save(driver);
 
