@@ -26,7 +26,7 @@ public class UserService extends AbstractCircuitBreakFallbackHandler{
         final String jwt = ((Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
                 .getTokenValue();
         final URI uri= UriComponentsBuilder.fromHttpUrl(serviceUrlConfig.userServiceUrl())
-                .path("/driver/private/driver-id")
+                .path("/private/drivers/id")
                 .build().toUri();
         return restClient.get()
                 .uri(uri)
@@ -40,7 +40,7 @@ public class UserService extends AbstractCircuitBreakFallbackHandler{
     @CircuitBreaker(name="restCircuitBreaker", fallbackMethod="handleFallback")
     public String getUserIdOfDriver(String driverId, String jwt ){
         final URI uri= UriComponentsBuilder.fromHttpUrl(serviceUrlConfig.userServiceUrl())
-                .path("/driver/private/user-id")
+                .path("/private/drivers/user-id")
                 .queryParam("driverId", driverId)
                 .build().toUri();
         return restClient.get()

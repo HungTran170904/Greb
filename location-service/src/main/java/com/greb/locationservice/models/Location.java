@@ -1,7 +1,9 @@
 package com.greb.locationservice.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.greb.locationservice.dtos.DriverStatus;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -16,20 +18,26 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "output-location")
+@Builder
+@Document(collection = "location")
 public class Location {
     @Id
     private String driverId;
 
     @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)
-    private GeoJsonPoint currPosition;
+    private GeoJsonPoint position;
+
+    private DriverStatus status;
 
     private String vehicleId;
 
-    private String rideId;
+    private String serviceTypeId;
 
-    private String serviceId;
+    private Integer timestamp;
 
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX")
-    private Date createdAt;
+    private Double rideDistance;
+
+    private Double bearing;
+
+    private Double instantSpeed;
 }

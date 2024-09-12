@@ -16,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -28,6 +29,12 @@ public class CustomerService {
     @Transactional
     public ResponseCustomerDto register(RegisterCustomerDto dto){
         String userId= SecurityContextHolder.getContext().getAuthentication().getName();
+        // create new Customer
+        Customer customer= customerConverter.fromRegisterDto(dto);
+        customer.setUserId(userId);
+        customer.setDiscountPoint(0);
+        var savedCustomer=customerRepo.save(customer);
+
         // add CUSTOMER role
         var userResource= realmResource.users().get(userId);
         if(userResource==null) throw new BadRequestException("UserId "+userId+" not found");
@@ -35,17 +42,12 @@ public class CustomerService {
         if (roles.stream().anyMatch(
                 role -> Arrays.stream(UserRole.values())
                         .anyMatch(userRole -> userRole.name().equals(role.getName())
-                )
+                        )
         )){
             throw new BadRequestException("This user has already registered");
         }
         RoleRepresentation customerRole= realmResource.roles().get(UserRole.CUSTOMER.toString()).toRepresentation();
         userResource.roles().realmLevel().add(List.of(customerRole));
-        // create new Customer
-        Customer customer= customerConverter.fromRegisterDto(dto);
-        customer.setUserId(userId);
-        customer.setDiscountPoint(0);
-        var savedCustomer=customerRepo.save(customer);
 
         return customerConverter.toResponseDto(savedCustomer, userResource.toRepresentation());
     }

@@ -1,5 +1,8 @@
 package com.greb.locationservice.services;
 
+import com.greb.locationservice.dtos.DriverStatus;
+import com.greb.locationservice.dtos.LocationConverter;
+import com.greb.locationservice.dtos.LocationDto;
 import com.greb.locationservice.models.Location;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -15,57 +18,71 @@ import java.util.List;
 @RequiredArgsConstructor
 public class LocationService {
     private final MongoTemplate mongoTemplate;
+    private final LocationConverter locationConverter;
 
-    public Location searchBestVehicles(
+    public LocationDto searchBestLocation(
             Double userLon,
             Double userLat,
-            String serviceId,
+            String serviceTypeId,
             Double maxDistance,
             String rejectedDriverIdsStr) {
         Query query = new Query();
 
         var rejectedDriverIds= Arrays.stream(rejectedDriverIdsStr.split("\\,")).toList();
-        query.addCriteria(Criteria.where("driverId").not().in(rejectedDriverIds));
+        if(!rejectedDriverIds.isEmpty())
+            query.addCriteria(Criteria.where("driverId").not().in(rejectedDriverIds));
 
         GeoJsonPoint position = new GeoJsonPoint(userLon, userLat);
-        query.addCriteria(Criteria.where("currPosition")
+        query.addCriteria(Criteria.where("position")
                 .near(position).maxDistance(maxDistance*1000));
 
-        query.addCriteria(Criteria.where("serviceId").is(serviceId));
+        query.addCriteria(Criteria.where("serviceTypeId").is(serviceTypeId));
 
-        query.addCriteria(Criteria.where("rideId").exists(false)
-                .orOperator(Criteria.where("rideId").isNull()));
+        query.addCriteria(Criteria.where("status").is(DriverStatus.AVAILABLE));
 
-        var result= mongoTemplate.find(query, Location.class);
-        if(result.size()>0) return result.get(0);
-        else return null;
+        var locations= mongoTemplate.find(query, Location.class);
+        if(locations.isEmpty()) return null;
+        else return locationConverter.toDto(locations.get(0));
     }
 
-    public List<Location> searchNearVehicles(
+    public List<LocationDto> searchNearLocations(
             Double choosedLon,
             Double choosedLat,
-            String serviceId,
+            String serviceTypeId,
             Double maxDistance,
             Boolean isOnline
     ){
         Query query = new Query();
         if(choosedLon != null&&choosedLat!=null&&maxDistance!=null){
             GeoJsonPoint position = new GeoJsonPoint(choosedLon, choosedLat);
-            query.addCriteria(Criteria.where("currPosition")
+            query.addCriteria(Criteria.where("position")
                     .near(position).maxDistance(maxDistance*1000));
         }
-        if(serviceId!=null){
-            query.addCriteria(Criteria.where("serviceId").is(serviceId));
+        if(serviceTypeId!=null){
+            query.addCriteria(Criteria.where("serviceTypeId").is(serviceTypeId));
         }
-        if(isOnline==true)
-            query.addCriteria(Criteria.where("rideId").exists(true));
-        else query.addCriteria(Criteria.where("rideId").not().exists(true));
-        return mongoTemplate.find(query, Location.class);
+        if(isOnline!=null){
+            if(isOnline)
+                query.addCriteria(Criteria.where("status").is(DriverStatus.ACTIVE));
+            else query.addCriteria(Criteria.where("status").not().is(DriverStatus.ACTIVE));
+        }
+        var locations= mongoTemplate.find(query, Location.class);
+        return locations.stream().map(locationConverter::toDto).toList();
     }
 
-    public List<Location> findByVehicleIds(List<String> vehicleIds) {
+    public List<LocationDto> findByDriverIds(String driverIdsStr) {
+        var driverIds= Arrays.stream(driverIdsStr.split("\\,")).toList();
         Query query = new Query();
-        query.addCriteria(Criteria.where("_id").in(vehicleIds));
-        return mongoTemplate.find(query, Location.class);
+        query.addCriteria(Criteria.where("driverId").in(driverIds));
+        var locations= mongoTemplate.find(query, Location.class);
+        return locations.stream().map(locationConverter::toDto).toList();
+    }
+
+    public LocationDto findByDriverId(String driverId){
+        Query query = new Query();
+        query.addCriteria(Criteria.where("driverId").is(driverId));
+        var location= mongoTemplate.findOne(query, Location.class);
+        if(location!=null) return locationConverter.toDto(location);
+        else return null;
     }
 }

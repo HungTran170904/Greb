@@ -60,12 +60,11 @@ public class NotificationService extends AbstractCircuitBreakFallbackHandler{
 
     public void sendWebPush(NoticeDto dto, String jwt){
         final URI uri= UriComponentsBuilder.fromHttpUrl(serviceUrlConfig.notificationServiceUrl())
-                        .path("/send-webpush")
+                        .path("/webpush")
                         .build().toUri();
         restClient.post()
                 .uri(uri)
                 .headers(h->h.setBearerAuth(jwt))
-                .contentType(MediaType.APPLICATION_JSON)
                 .body(dto)
                 .retrieve()
                 .toBodilessEntity();
@@ -73,7 +72,7 @@ public class NotificationService extends AbstractCircuitBreakFallbackHandler{
 
     public void sendEmail(MailDto dto, String jwt){
         final URI uri= UriComponentsBuilder.fromHttpUrl(serviceUrlConfig.notificationServiceUrl())
-                .path("/send-email")
+                .path("/email")
                 .build().toUri();
         restClient.post()
                 .uri(uri)

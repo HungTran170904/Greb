@@ -10,8 +10,6 @@ import com.greb.fleetmanagementservice.model.enums.VehicleType;
 import com.greb.fleetmanagementservice.repository.VehicleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -53,7 +51,6 @@ public class VehicleService {
     }
 
     public List<ResponseVehicleDto> getByDriverId(){
-        String userId= SecurityContextHolder.getContext().getAuthentication().getName();
         String driverId= userService.getDriverId();
         return vehicleRepo.findByDriverId(driverId).stream()
                 .map(vehicle->vehicleConverter.toResponseDto(vehicle))

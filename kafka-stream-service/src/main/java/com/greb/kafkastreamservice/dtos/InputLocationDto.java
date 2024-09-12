@@ -1,21 +1,22 @@
 package com.greb.kafkastreamservice.dtos;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.util.Date;
-
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @Data
 public class InputLocationDto {
+    private DriverStatus status;
+
     private PositionDto position;
 
-    private String rideId;
-
-    private String serviceId;
-
-    private String driverId;
-
     private String vehicleId;
+
+    private String serviceTypeId;
 
     private Integer timestamp; //miliseconds unit
 }

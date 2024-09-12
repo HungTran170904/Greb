@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -78,20 +79,8 @@ public class DriverService {
 
     @Transactional
     public ResponseDriverDto register(RegisterDriverDto dto) {
+        var auth= SecurityContextHolder.getContext().getAuthentication();
         String userId= SecurityContextHolder.getContext().getAuthentication().getName();
-        // add DRIVER role
-        var user= realmResource.users().get(userId);
-        if(user==null) throw new BadRequestException("UserId "+userId+" not found");
-        List<RoleRepresentation> roles=user.roles().realmLevel().listAll();
-        if (roles.stream().anyMatch(
-                role -> Arrays.stream(UserRole.values())
-                        .anyMatch(userRole -> userRole.name().equals(role.getName())
-                        )
-        )){
-            throw new BadRequestException("This user has already registered");
-        }
-        RoleRepresentation customerRole= realmResource.roles().get(UserRole.DRIVER.toString()).toRepresentation();
-        user.roles().realmLevel().add(List.of(customerRole));
 
         // create new driver
         var driver= driverConverter.fromRegisterDto(dto);
@@ -100,9 +89,23 @@ public class DriverService {
         driver.setAverageRating(0.0);
         var savedDriver=driverRepo.save(driver);
 
+        // add Driver Id and role to keycloak
+        var userResource= realmResource.users().get(userId);
+        if(userResource==null) throw new BadRequestException("UserId "+userId+" not found");
+        List<RoleRepresentation> roles=userResource.roles().realmLevel().listAll();
+        if (roles.stream().anyMatch(
+                role -> Arrays.stream(UserRole.values())
+                        .anyMatch(userRole -> userRole.name().equals(role.getName())
+                        )
+        )){
+            throw new BadRequestException("This user has already registered");
+        }
+        RoleRepresentation driverRole= realmResource.roles().get(UserRole.DRIVER.toString()).toRepresentation();
+        userResource.roles().realmLevel().add(List.of(driverRole));
+
         notifyNewDriverToAdmin(driver.getId());
 
-        return driverConverter.toResponseDto(savedDriver, user.toRepresentation());
+        return driverConverter.toResponseDto(savedDriver, userResource.toRepresentation());
     }
 
     public ResponseDriverDto updateProfile(UpdateDriverDto dto){

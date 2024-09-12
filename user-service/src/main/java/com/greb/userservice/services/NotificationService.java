@@ -24,7 +24,7 @@ public class NotificationService extends AbstractCircuitBreakFallbackHandler{
     @CircuitBreaker(name="restCircuitBreaker", fallbackMethod="handleBodilessFallback")
     public void sendWebPush(NoticeDto dto, String jwt){
         final URI uri= UriComponentsBuilder.fromHttpUrl(serviceUrlConfig.notificationServiceUrl())
-                .path("/send-webpush")
+                .path("/webpush")
                 .build().toUri();
         restClient.post()
                 .uri(uri)
@@ -39,7 +39,7 @@ public class NotificationService extends AbstractCircuitBreakFallbackHandler{
     @CircuitBreaker(name="restCircuitBreaker", fallbackMethod="handleBodilessFallback")
     public void sendEmail(MailDto dto, String jwt){
         final URI uri= UriComponentsBuilder.fromHttpUrl(serviceUrlConfig.notificationServiceUrl())
-                .path("/send-email")
+                .path("/email")
                 .build().toUri();
         restClient.post()
                 .uri(uri)

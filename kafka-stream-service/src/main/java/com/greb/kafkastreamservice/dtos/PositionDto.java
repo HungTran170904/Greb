@@ -1,4 +1,4 @@
-package com.greb.locationservice.dtos;
+package com.greb.kafkastreamservice.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

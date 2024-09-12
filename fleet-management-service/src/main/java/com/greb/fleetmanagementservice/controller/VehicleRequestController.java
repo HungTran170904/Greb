@@ -14,13 +14,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/vehicle-request")
 @RequiredArgsConstructor
 public class VehicleRequestController {
     private final VehicleRequestService vehicleRequestService;
 
     @PreAuthorize("hasRole('DRIVER')")
-    @PostMapping("/create")
+    @PostMapping("/vehicle-requests")
     public ResponseEntity<ResVehicleRequestDto> create(
             @RequestBody @Valid CreateVehicleRequestDto dto
     ){
@@ -28,7 +27,7 @@ public class VehicleRequestController {
     }
 
     @PreAuthorize("hasRole('DRIVER')")
-    @PatchMapping("/update/{vehicleRequestId}")
+    @PatchMapping("/vehicle-requests/{vehicleRequestId}")
     public ResponseEntity<ResVehicleRequestDto> update(
             @PathVariable("vehicleRequestId") String vehicleRequestId,
             @RequestBody @Valid UpdateVehicleRequestDto dto
@@ -37,7 +36,7 @@ public class VehicleRequestController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/approve-request")
+    @PostMapping("/vehicle-requests/approving")
     public ResponseEntity<RequestHistoryDto> approveRequest(
             @RequestBody @Valid ApprovalDto dto
     ){
@@ -45,7 +44,7 @@ public class VehicleRequestController {
     }
 
     @PreAuthorize("hasRole('DRIVER')")
-    @DeleteMapping("cancel-request/{vehicleRequestId}")
+    @DeleteMapping("/vehicle-requests/cancelling/{vehicleRequestId}")
     public ResponseEntity<Void> cancelRequest(
             @PathVariable("vehicleRequestId") String vehicleRequestId
     ){
@@ -53,15 +52,15 @@ public class VehicleRequestController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/request-history/{vehicleRequestId}")
-    public ResponseEntity<List<RequestHistoryDto>> getRequestHistoriesByVehicleRequestId(
+    @GetMapping("/vehicle-requests/{vehicleRequestId}/request-histories")
+    public ResponseEntity<List<RequestHistoryDto>> getRequestHistoriesById(
             @PathVariable("vehicleRequestId") String vehicleRequestId
     ){
-        return ResponseEntity.ok(vehicleRequestService.getRequestHistoriesByVehicleRequestId(vehicleRequestId));
+        return ResponseEntity.ok(vehicleRequestService.getRequestHistoriesById(vehicleRequestId));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/search")
+    @GetMapping("/vehicle-requests")
     public ResponseEntity<ListVehicleRequestsDto> searchVehicleRequests(
             @RequestParam(value = "requestStatus", required = false) RequestStatus status,
             @RequestParam(value="requestType", required = false) RequestType requestType,
@@ -76,7 +75,7 @@ public class VehicleRequestController {
         ));
     }
 
-    @GetMapping("/driver")
+    @GetMapping("/drivers/vehicle-requests")
     public ResponseEntity<ListVehicleRequestsDto> getRequestsByDriverId(
             @RequestParam("pageNo") Integer pageNo,
             @RequestParam("pageSize") Integer pageSize

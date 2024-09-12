@@ -90,35 +90,8 @@ services:
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
-    networks:
-      - greb-network
-  
-  kafka-connect:
-    image: confluentinc/cp-kafka-connect:7.0.0
-    container_name: kafka-connect
-    depends_on:
-      - kafka
-    environment:
-      CONNECT_BOOTSTRAP_SERVERS: 'kafka:9092'
-      CONNECT_REST_ADVERTISED_HOST_NAME: kafka-connect
-      CONNECT_REST_PORT: 8083
-      CONNECT_GROUP_ID: kafka-connect-group
-      CONNECT_CONFIG_STORAGE_TOPIC: kafka-connect-configs
-      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: 1
-      CONNECT_OFFSET_STORAGE_TOPIC: kafka-connect-offsets
-      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 1
-      CONNECT_STATUS_STORAGE_TOPIC: kafka-connect-status
-      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
-      CONNECT_KEY_CONVERTER: 'org.apache.kafka.connect.json.JsonConverter'
-      CONNECT_VALUE_CONVERTER: 'org.apache.kafka.connect.json.JsonConverter'
-      CONNECT_INTERNAL_KEY_CONVERTER: 'org.apache.kafka.connect.json.JsonConverter'
-      CONNECT_INTERNAL_VALUE_CONVERTER: 'org.apache.kafka.connect.json.JsonConverter'
-      CONNECT_ZOOKEEPER_CONNECT: 'zookeeper:2181'
-      CONNECT_PLUGIN_PATH: '/etc/kafka-connect/jars'
-    ports:
-      - "8083:8083"
-    volumes: 
-      - ./kafka/mongo-connector/lib:/etc/kafka-connect/jars
+    volumes:
+      - kafka:/var/lib/kafka/data
     networks:
       - greb-network
 
@@ -129,3 +102,4 @@ volumes:
   postgres:
   pgadmin:
   mongodb:
+  kafka:

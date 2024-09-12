@@ -1,4 +1,4 @@
-package com.greb.locationservice.serdes;
+package com.greb.kafkastreamservice.serdes;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;

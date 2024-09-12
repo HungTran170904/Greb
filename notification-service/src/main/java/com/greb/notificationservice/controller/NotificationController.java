@@ -17,7 +17,7 @@ public class NotificationController {
     private final WebPushService webPushService;
     private final MailService mailService;
 
-    @PostMapping("/send-webpush")
+    @PostMapping("/webpush")
     public ResponseEntity<Void> sendWebPushNotification(
             @RequestBody @Valid NoticeDto noticeDto
     ){
@@ -25,7 +25,7 @@ public class NotificationController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/send-email")
+    @PostMapping("/email")
     public ResponseEntity<Void> sendEmail(
             @RequestBody @Valid MailDto mailDto
     ){

@@ -31,7 +31,7 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("swagger-ui/**", "/v3/api-docs/**","/output-location/private/search-best-vehicles").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**","/**/private/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));

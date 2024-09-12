@@ -12,12 +12,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/vehicle")
 @RequiredArgsConstructor
 public class VehicleController {
     private final VehicleService vehicleService;
 
-    @GetMapping("/id/{vehicleId}")
+    @GetMapping("/vehicles/{vehicleId}")
     public ResponseEntity<ResponseVehicleDto> getById(
             @PathVariable("vehicleId") String vehicleId
     ){
@@ -25,7 +24,7 @@ public class VehicleController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/search")
+    @GetMapping("/vehicles")
     public ResponseEntity<ListVehiclesDto> searchVehicles(
             @RequestParam(value = "vehicleType", required = false) VehicleType vehicleType,
             @RequestParam(value = "licencePlate", defaultValue = "", required = false) String licencePlate,
@@ -46,7 +45,7 @@ public class VehicleController {
     }
 
     @PreAuthorize("hasRole('DRIVER')")
-    @GetMapping("/driver")
+    @GetMapping("/drivers/vehicles")
     public ResponseEntity<List<ResponseVehicleDto>> getByDriverId(){
         return ResponseEntity.ok(vehicleService.getByDriverId());
     }

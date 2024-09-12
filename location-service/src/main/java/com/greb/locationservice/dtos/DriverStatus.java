@@ -1,2 +1,7 @@
-package com.greb.locationservice.dtos;public class DriverStatus {
+package com.greb.locationservice.dtos;
+
+public enum DriverStatus {
+    ACTIVE,
+    AVAILABLE,
+    OFFLINE
 }

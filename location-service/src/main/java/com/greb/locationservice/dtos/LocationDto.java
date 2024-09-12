@@ -9,16 +9,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class OutputLocationDto {
+public class LocationDto {
+    private String driverId;
+
     private PositionDto position;
 
-    private String rideId;
+    private String vehicleId;
 
     private String serviceTypeId;
 
-    private String driverId;
-
-    private String vehicleId;
+    private DriverStatus status;
 
     private Integer timestamp;
 

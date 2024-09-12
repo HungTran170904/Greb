@@ -1,6 +1,6 @@
 package com.greb.userservice;
 
-import com.greb.userservice.config.ServiceUrlConfig;
+import com.greb.userservice.configs.ServiceUrlConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

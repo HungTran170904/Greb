@@ -182,7 +182,7 @@ public class VehicleRequestService {
         notiService.sendNotificationToAdmins(noticeDto);
     }
 
-    public List<RequestHistoryDto> getRequestHistoriesByVehicleRequestId(String vehicleRequestId){
+    public List<RequestHistoryDto> getRequestHistoriesById(String vehicleRequestId){
         return requestHistoryRepo.findByVehicelRequestId(vehicleRequestId)
                 .stream().map(rh->requestHistoryConverter.toDto(rh))
                 .toList();

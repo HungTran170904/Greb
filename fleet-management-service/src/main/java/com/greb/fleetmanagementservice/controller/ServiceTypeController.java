@@ -9,14 +9,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/service-type")
 @RequiredArgsConstructor
 public class ServiceTypeController {
     private final ServiceTypeService serviceTypeService;
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/create")
+    @PostMapping("/service-types")
     public ResponseEntity<ResServiceTypeDto> createServiceType(
             @RequestBody @Valid ReqServiceTypeDto dto
     ){
@@ -24,7 +25,7 @@ public class ServiceTypeController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/update/{serviceTypeId}")
+    @PutMapping("/service-types/{serviceTypeId}")
     public ResponseEntity<ResServiceTypeDto> updateServiceType(
             @PathVariable("serviceTypeId") String serviceTypeId,
             @RequestBody @Valid ReqServiceTypeDto dto
@@ -32,15 +33,15 @@ public class ServiceTypeController {
         return ResponseEntity.ok(serviceTypeService.updateServiceType(serviceTypeId,dto));
     }
 
-    @GetMapping("/id/{serviceTypeId}")
+    @GetMapping("/service-types/{serviceTypeId}")
     public ResponseEntity<ResServiceTypeDto> getById(
             @PathVariable("serviceTypeId") String serviceTypeId
     ){
         return ResponseEntity.ok(serviceTypeService.getById(serviceTypeId));
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<?> getById(){
+    @GetMapping("/service-types")
+    public ResponseEntity<List<ResServiceTypeDto>> getAll(){
         return ResponseEntity.ok(serviceTypeService.getAll());
     }
 }
